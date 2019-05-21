@@ -1,0 +1,50 @@
+def crop(img_array,img_mask):
+    data = []
+    label = []
+    for k in range(5):
+        tmp_img=img_array[:,:,:]
+        tmp_mask=img_mask[:,:,:]
+        print(tmp_img.shape)
+        i=random.randint(0,2)
+        
+        if i==0:
+            tmp_img,tmp_mask=random_rotate(tmp_img,tmp_mask)
+        if i==1:
+            tmp_img,tmp_mask=random_flip(tmp_img,tmp_mask)
+        if i==2:
+            tmp_img,tmp_mask=tmp_img,tmp_mask
+        tmp_img.shape = [1,tmp_img.shape[0],tmp_img.shape[1],tmp_img.shape[2],1]
+        tmp_mask.shape = [1,tmp_mask.shape[0],tmp_mask.shape[1],tmp_mask.shape[2],1]
+        data.append(tmp_img)
+        label.append(tmp_mask)
+
+    print(len(data))
+    data = np.asarray(data)
+    label = np.asarray(label)
+    data = np.concatenate(data,axis = 0)
+    label = np.concatenate(label,axis = 0)
+    print(data.shape)
+    print(label.shape)
+    return data,label
+
+def random_rotate(tmp_img,tmp_mask):
+    angle_list=[90,180,270]
+    random.shuffle(angle_list)
+    i=random.randint(0,1)
+    if i==0:
+        array=rotate(tmp_img,180,axes=(1,2))
+        array_mask=rotate(tmp_mask,180,axes=(1,2))
+    if i==1:
+        array=rotate(tmp_img,180,axes=(0,2))
+        array_mask=rotate(tmp_mask,180,axes=(0,2))
+    return array,array_mask
+
+def random_flip(tmp_img,tmp_mask):
+    a=np.random.randint(1,2)
+    if a==1:
+        array=np.flipud(tmp_img)
+        array_mask=np.flipud(tmp_mask)
+    if a==2:
+        array=np.fliplr(tmp_img)
+        array_mask=np.fliplr(tmp_mask)
+    return array,array_mask
